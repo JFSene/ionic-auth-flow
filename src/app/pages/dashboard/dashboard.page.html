@@ -1,20 +1,20 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Dashboard</ion-title>
+  <ion-toolbar color="secondary">
+    <ion-title>Saldo em Conta</ion-title>
   </ion-toolbar>
 </ion-header>
  
-<ion-content padding>
+<ion-content padding color="primary">
  
-  <ion-grid>
+  <ion-grid *ngIf="balance">
     <ion-row>
-      <ion-col text-center>
-        Welcome to Dashboard!
+      <ion-col >
+       Bem vindo {{ user }}
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col text-center>
-        Your Registered EmailID : {{userEmail}}
+      <ion-col>
+        Seu saldo atual : {{ balance }}
       </ion-col>
     </ion-row>
   </ion-grid>  

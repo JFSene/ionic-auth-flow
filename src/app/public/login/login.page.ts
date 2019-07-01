@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { NavController } from '@ionic/angular';
 import { AuthenticationService } from '../../services/authentication.service';
-
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, NavController } from '@ionic/angular';
 import { first } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
+import { Subscription } from 'rxjs';
+import { User } from '../../models/user';
+import { Auth } from '../../models/auth';
+import { Balance } from '../../models/balance';
  
 @Component({
   selector: 'app-login',
@@ -13,37 +15,29 @@ import { HttpResponse } from '@angular/common/http';
   providers: [ AuthenticationService ],
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage implements OnInit {
- 
+export class LoginPage implements OnInit, OnDestroy {
+  user: User;
   validations_form: FormGroup;
   errorMessage: string = '';
+  private errorSub: Subscription;
   loaderToShow: any;
 
   constructor(
-    private navCtrl: NavController,
     private authService: AuthenticationService,
     private formBuilder: FormBuilder,
+    private navCtrl: NavController,
     public loadingController: LoadingController
   ) { }
+  
+  ionViewWillLeave() {
+    this.validations_form.reset();
+  }
  
   ngOnInit() {
- 
-    this.validations_form = this.formBuilder.group({
-      account: new FormControl('', Validators.compose([
-        Validators.required,
-        Validators.pattern('^[0-9]*$'),
-        Validators.minLength(5)
-      ])),
-      holder: new FormControl('', Validators.compose([
-        Validators.required,
-        Validators.pattern('^[0-9]*$')
-      ])),
-      password: new FormControl('', Validators.compose([
-        Validators.minLength(8),
-        Validators.required,
-        Validators.pattern('^[0-9]*$')
-      ])),
+    this.errorSub = this.authService.error.subscribe(err => {
+      this.errorMessage = err;
     });
+    this.formValidator();
   }
  
  
@@ -71,24 +65,68 @@ export class LoginPage implements OnInit {
       .pipe(first())
       .subscribe(
         (res: HttpResponse<any>) => {
-          this.hideLoader();
-          this.errorMessage = "";
-          this.navCtrl.navigateForward('/dashboard')
+          this.user = res.body;
+          var auth: Auth = {
+            uid: res.headers.get('uid'),
+            client: res.headers.get('client'),
+            accessToken: res.headers.get('access-token')
+          }
+          console.log("User");
+          console.log(this.user.data);
           console.log("+++++++++++++++++++++++++++++++++");
-          console.log(res.body);
+          console.log("HEADERS");
+          console.log(auth);
+          
+          this.getBalance(auth, this.user);
+          this.errorMessage = "";
         }, 
         err => {
-          this.errorMessage = err.message;
+          this.errorMessage = err.error.errors;
+          console.log(err.error);
+          this.hideLoader();
         });
   }
+
+  getBalance(auth: Auth, userData: User) {
+    this.authService.getUserDetails(auth).subscribe(balance => {
+      console.log(balance);
+      this.goToRegisterPage(userData, balance);
+    });
+    
+  }
  
-  goToRegisterPage(){
-    this.navCtrl.navigateForward('/register');
+  //Navigation
+  goToRegisterPage(userData: User, balance: Balance){
+    this.hideLoader();
+    this.navCtrl.navigateForward(`dashboard/${userData.data.name}/${balance.balance}`)
   }
 
+  //FORM VALIDATION
+  formValidator() {
+    this.validations_form = this.formBuilder.group({
+      account: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.pattern('^[0-9]*$'),
+        Validators.minLength(5)
+      ])),
+      holder: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.pattern('^[0-9]*$')
+      ])),
+      password: new FormControl('', Validators.compose([
+        Validators.minLength(8),
+        Validators.required,
+        Validators.pattern('^[0-9]*$')
+      ])),
+    });
+  }
+
+
+  //Loading Component
+  //TODO: Extract to new Component
   showLoader() {
     this.loaderToShow = this.loadingController.create({
-      message: 'This Loader will Not AutoHide',
+      message: 'Autenticando usuário...',
       spinner: "lines"
     }).then((res) => {
       res.present();
@@ -101,6 +139,11 @@ export class LoginPage implements OnInit {
 
   hideLoader() {
     this.loadingController.dismiss();
+}
+
+//UNSUB error
+ngOnDestroy() {
+  this.errorSub.unsubscribe();
 }
  
 }

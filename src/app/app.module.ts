@@ -28,6 +28,6 @@ import { AuthenticationService } from './services/Authentication.service';
     AuthenticationService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}
