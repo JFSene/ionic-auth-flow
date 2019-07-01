@@ -6,7 +6,7 @@ Ionic auth flow and api consumption
 `ionic serve`
 
 
-#Tech Used
+# Tech Used
 - HTTPClientModule to consume API
 - Storage and SQLite to persist data
 - NavController for Routing
