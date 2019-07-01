@@ -1,18 +1,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { AuthenticationService } from '../../services/authentication.service';
-import { LoadingController, NavController } from '@ionic/angular';
+import { StorageService } from '../../services/storage.service';
+import { LoadingController, NavController, ToastController } from '@ionic/angular';
 import { first } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { User } from '../../models/user';
 import { Auth } from '../../models/auth';
-import { Balance } from '../../models/balance';
+import { AuthenticationService } from 'src/app/services/authentication.service';
  
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
-  providers: [ AuthenticationService ],
+  providers: [ ],
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit, OnDestroy {
@@ -26,9 +26,12 @@ export class LoginPage implements OnInit, OnDestroy {
     private authService: AuthenticationService,
     private formBuilder: FormBuilder,
     private navCtrl: NavController,
-    public loadingController: LoadingController
+    private loadingController: LoadingController,
+    private storageService: StorageService,
+    private toastController: ToastController
   ) { }
   
+  // Views Lifecycle
   ionViewWillLeave() {
     this.validations_form.reset();
   }
@@ -81,9 +84,7 @@ export class LoginPage implements OnInit, OnDestroy {
           this.errorMessage = "";
         }, 
         err => {
-          this.errorMessage = err.error.errors;
-          console.log(err.error);
-          this.hideLoader();
+          this.errorHandler(err.error.errors);
         });
   }
 
@@ -92,15 +93,31 @@ export class LoginPage implements OnInit, OnDestroy {
       console.log("BALANCE");
       console.log(balance);
       console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-      this.goToRegisterPage(userData, balance);
+      userData.data.auth = auth;
+      userData.data.balance = balance
+      this.addItem(userData)
+    }, 
+    err => {
+      console.log(err);
+      console.log(err.error);
+      console.log(err.error.errors);
+      this.errorHandler(err.error.errors);
     });
-    
+  }
+
+  // CREATE
+  addItem(user: User) {
+    this.storageService.addItem(user).then(item => {
+      console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+      console.log(`User is saved: ${user.data}`);
+      this.goToRegisterPage(user);
+    });
   }
  
   //Navigation
-  goToRegisterPage(userData: User, balance: Balance){
+  goToRegisterPage(userData: User){
     this.hideLoader();
-    this.navCtrl.navigateForward(`dashboard/${balance.balance}/${userData.data.name}`)
+    this.navCtrl.navigateForward(`dashboard/${userData.data.balance.balance}/${userData.data.name}`)
   }
 
   //FORM VALIDATION
@@ -123,6 +140,15 @@ export class LoginPage implements OnInit, OnDestroy {
     });
   }
 
+  //ERROR HANDLER
+  errorHandler(msg) {
+    this.errorMessage = msg;
+      this.showToast(this.errorMessage);
+      this.validations_form.reset();
+      console.log(msg);
+      this.hideLoader();
+  }
+
 
   //Loading Component
   //TODO: Extract to new Component
@@ -137,6 +163,16 @@ export class LoginPage implements OnInit, OnDestroy {
         console.log('Loading dismissed!');
       });
     });
+  }
+
+   // Helper
+   async showToast(msg) {
+    const toast = await this.toastController.create({
+      message: msg,
+      duration: 4000,
+      position: "middle"
+    });
+    toast.present();
   }
 
   hideLoader() {

@@ -4,12 +4,12 @@
   </ion-toolbar>
 </ion-header>
  
-<ion-content padding>
-  <form class="form" [formGroup]="validations_form"  (ngSubmit)="loginUser(validations_form.value)">
+<ion-content>
+  <form class="form" [formGroup]="validations_form"  (ngSubmit)="loginUser(validations_form.value)" class="login-form">
  
     <ion-item>
       <ion-label  position="floating" color="primary">Account</ion-label>
-      <ion-input type="text" formControlName="account"></ion-input>
+      <ion-input class="login-inputs" type="text" formControlName="account"></ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.account">
@@ -20,8 +20,8 @@
     </div>
 
     <ion-item>
-      <ion-label  position="floating" color="primary">Holder</ion-label>
-      <ion-input type="text" formControlName="holder"></ion-input>
+      <ion-label position="floating" color="primary">Holder</ion-label>
+      <ion-input class="login-inputs" type="text" formControlName="holder"></ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.holder">
@@ -32,8 +32,8 @@
     </div>
  
     <ion-item>
-      <ion-label  position="floating" color="primary">Password</ion-label>
-      <ion-input type="password" formControlName="password" class="form-controll" required></ion-input>
+      <ion-label position="floating" color="primary">Password</ion-label>
+      <ion-input class="login-inputs" type="password" formControlName="password" class="form-controll" required></ion-input>
     </ion-item>
     <div class="validation-errors">
       <ng-container *ngFor="let validation of validation_messages.password">
@@ -43,10 +43,7 @@
       </ng-container>
     </div>
  
-    <ion-button  class="submit-btn" type="submit"  [disabled]="!validations_form.valid">Log In</ion-button>
-    
-  
-    
+    <ion-button  class="submit-btn" type="submit" expand="block" class="login-button" [disabled]="!validations_form.valid">Log In</ion-button>
     
   </form>
 </ion-content>

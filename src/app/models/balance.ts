@@ -1,7 +1,7 @@
 export interface Balance {
     balance:        number;
     limit:          number;
-    availableLimit: number;
-    blockedAmount:  number;
+    available_limit: number;
+    blocked_amount:  number;
 }
 

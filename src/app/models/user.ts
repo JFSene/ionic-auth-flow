@@ -1,3 +1,6 @@
+import { Auth } from './auth';
+import { Balance } from './balance';
+
 export interface User {
     data: Data;
 }
@@ -13,4 +16,6 @@ export interface Data {
     paymentMaxValue: string;
     infoEmail:       string;
     setPassword:     boolean;
+    auth:            Auth;
+    balance:          Balance;
 }

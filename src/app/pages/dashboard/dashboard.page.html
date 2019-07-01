@@ -1,12 +1,12 @@
 <ion-header>
-  <ion-toolbar color="secondary">
+  <ion-toolbar color="primary">
     <ion-title>Saldo em Conta</ion-title>
   </ion-toolbar>
 </ion-header>
  
-<ion-content padding color="primary">
+<ion-content padding>
  
-  <ion-grid *ngIf="balance">
+  <ion-grid>
     <ion-row>
       <ion-col >
        Bem vindo {{ user }}
@@ -14,7 +14,11 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        Seu saldo atual : {{ balance }}
+          
+        <ion-button (click)="showBalance()" expand="block" class="dashboard-button" icon-end>
+            <ion-icon name="paper" class="ion-no-margin"></ion-icon> 
+                     Extrato
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>  
@@ -22,7 +26,7 @@
   
 </ion-content>
 <ion-footer (click)="logout()">
-  <ion-toolbar color="secondary">
+  <ion-toolbar color="danger">
     <ion-title>Log out</ion-title>
   </ion-toolbar>
 </ion-footer>

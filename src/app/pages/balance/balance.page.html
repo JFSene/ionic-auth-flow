@@ -1,0 +1,25 @@
+<ion-header>
+    <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/dashboard"></ion-back-button>
+      </ion-buttons>
+      <ion-title>Extrato</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+<ion-content>
+    <ion-card>
+        <ion-card-header>
+          Extrato
+        </ion-card-header>
+        <ion-card-content>
+            <P text-wrap class="ion-text-justify" style="font-size: 13px;">Balance:      {{ balance }}</P>
+            <p text-wrap class="ion-text-justify" style="font-size: 13px;">Limit:      {{ limit }}</p>
+            <p text-wrap class="ion-text-justify" style="font-size: 13px;">Blocked Ammount:      {{ blockedAmount}}</p>
+            <p text-wrap class="ion-text-justify" style="font-size: 13px;">_________________________________________</p>
+            <p text-wrap class="ion-text-justify" style="font-size: 13px;">Available:      {{ availableLimit }}</p>
+        </ion-card-content>
+      </ion-card>
+
+      <ng-template #login>Please login to continue.</ng-template>
+</ion-content>

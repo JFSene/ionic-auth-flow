@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Storage } from '@ionic/storage';
-import { AuthenticationService } from 'src/app/services/Authentication.service';
-import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
-
+import { StorageService } from '../../services/storage.service';
+import { User } from '../../models/user';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,28 +10,29 @@ import { NavController } from '@ionic/angular';
   styleUrls: ['./dashboard.page.scss'],
 })
 export class DashboardPage implements OnInit {
-  public balance: string;
   public user: string;
+  public userModel: User;
 
 
   constructor(
-    private storage: Storage,
-    private acitvatedRoute: ActivatedRoute,
     private authService: AuthenticationService,
+    private storageService: StorageService,
     private navCtrl: NavController
   ) {
     
   }
-
-  ngOnInit(){
-    this.balance = this.numberToReal(Number(this.acitvatedRoute.snapshot.paramMap.get('balance')));
-    this.user = this.acitvatedRoute.snapshot.paramMap.get('name');
+  ionViewDidEnter() {
+    this.storageService.getItems().then(items => {
+      this.userModel = items;
+      this.user = this.userModel.data.name;  
+    });
   }
+  ngOnInit(){ }
 
   logout(){
     this.authService.logout()
     .then(res => {
-        console.log(res);
+      this.storageService.deleteItem(this.userModel.data.uid);
         this.navCtrl.pop();
       })
       .catch(error => {
@@ -40,13 +40,9 @@ export class DashboardPage implements OnInit {
       })
   }
 
-  public async getValues(name, value){
-    return await `${name}: ${this.storage.get(value)}`;
+  // NAVIGATION
+  showBalance() {
+    this.navCtrl.navigateForward('balance');
   }
-
-  numberToReal(numero) {
-    var numero = numero.toFixed(2).split('.');
-    numero[0] = "R$ " + numero[0].split(/(?=(?:...)*$)/).join('.');
-    return numero.join(',');
-}
+  
 }
