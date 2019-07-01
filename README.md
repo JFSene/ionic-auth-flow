@@ -2,7 +2,7 @@
 # ionic-auth-flow
 Ionic auth flow and api consumption
 
-##To run on the Browser
+# To run on the Browser
 `ionic serve`
 
 
