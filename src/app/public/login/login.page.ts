@@ -71,12 +71,12 @@ export class LoginPage implements OnInit, OnDestroy {
             client: res.headers.get('client'),
             accessToken: res.headers.get('access-token')
           }
-          console.log("User");
+          console.log("USER");
           console.log(this.user.data);
-          console.log("+++++++++++++++++++++++++++++++++");
+          console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
           console.log("HEADERS");
           console.log(auth);
-          
+          console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
           this.getBalance(auth, this.user);
           this.errorMessage = "";
         }, 
@@ -89,7 +89,9 @@ export class LoginPage implements OnInit, OnDestroy {
 
   getBalance(auth: Auth, userData: User) {
     this.authService.getUserDetails(auth).subscribe(balance => {
+      console.log("BALANCE");
       console.log(balance);
+      console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
       this.goToRegisterPage(userData, balance);
     });
     
@@ -98,7 +100,7 @@ export class LoginPage implements OnInit, OnDestroy {
   //Navigation
   goToRegisterPage(userData: User, balance: Balance){
     this.hideLoader();
-    this.navCtrl.navigateForward(`dashboard/${userData.data.name}/${balance.balance}`)
+    this.navCtrl.navigateForward(`dashboard/${balance.balance}/${userData.data.name}`)
   }
 
   //FORM VALIDATION

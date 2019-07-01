@@ -72,7 +72,6 @@ export class AuthenticationService {
       })
       .pipe(
         map(responseData => {
-          console.log(responseData);
           const balance: Balance = responseData;
           return balance;
         }),
