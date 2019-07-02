@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from '../../models/user';
 import { StorageService } from '../../services/storage.service';
-import { AuthenticationService } from '../../services/authentication.service';
 import { Balance } from 'src/app/models/balance';
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: 'app-balance',
@@ -11,7 +10,7 @@ import { Balance } from 'src/app/models/balance';
 })
 export class BalancePage implements OnInit {
 
-  public userModel: User;
+  public userBalance: Balance;
   balance:        string;
   limit:          string;
   availableLimit: string;
@@ -19,19 +18,30 @@ export class BalancePage implements OnInit {
 
 
   constructor(
-    private authService: AuthenticationService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private route: ActivatedRoute
   ) { }
 
+    ionViewWillEnter() {
+      this.route.queryParams.subscribe(params => {
+        this.userBalance = JSON.parse(params["userBalance"]);
+        this.balance = this.numberToReal(Number(this.userBalance.balance));
+        this.limit = this.numberToReal(Number(this.userBalance.limit));
+        this.availableLimit = this.numberToReal(Number(this.userBalance.available_limit));
+        this.blockedAmount = this.numberToReal(Number(this.userBalance.blocked_amount));
+        console.log(this.userBalance);
+      });
+      console.log(this.userBalance);
+    }
   ionViewDidEnter() {
-    this.storageService.getItems().then(items => {
-      this.userModel = items; 
-      console.log(this.userModel.data.balance);
-      this.balance = this.numberToReal(Number(this.userModel.data.balance.balance));
-      this.limit = this.numberToReal(Number(this.userModel.data.balance.limit));
-      this.availableLimit = this.numberToReal(Number(this.userModel.data.balance.available_limit));
-      this.blockedAmount = this.numberToReal(Number(this.userModel.data.balance.blocked_amount));
-    });
+    // this.storageService.getItems().then(items => {
+    //   this.userModel = items; 
+    //   console.log(this.userModel.data.balance);
+    //   this.balance = this.numberToReal(Number(this.userModel.data.balance.balance));
+    //   this.limit = this.numberToReal(Number(this.userModel.data.balance.limit));
+    //   this.availableLimit = this.numberToReal(Number(this.userModel.data.balance.available_limit));
+    //   this.blockedAmount = this.numberToReal(Number(this.userModel.data.balance.blocked_amount));
+    // });
     
   }
 

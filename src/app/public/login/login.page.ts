@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { StorageService } from '../../services/storage.service';
 import { LoadingController, NavController, ToastController } from '@ionic/angular';
+import { NavigationExtras } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { HttpResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
@@ -22,6 +23,8 @@ export class LoginPage implements OnInit, OnDestroy {
   private errorSub: Subscription;
   loaderToShow: any;
 
+
+  
   constructor(
     private authService: AuthenticationService,
     private formBuilder: FormBuilder,
@@ -95,7 +98,8 @@ export class LoginPage implements OnInit, OnDestroy {
       console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
       userData.data.auth = auth;
       userData.data.balance = balance
-      this.addItem(userData)
+      // this.addItem(userData)
+      this.goToRegisterPage(userData);
     }, 
     err => {
       console.log(err);
@@ -110,14 +114,22 @@ export class LoginPage implements OnInit, OnDestroy {
     this.storageService.addItem(user).then(item => {
       console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
       console.log(`User is saved: ${user.data}`);
-      this.goToRegisterPage(user);
+      
     });
   }
  
   //Navigation
   goToRegisterPage(userData: User){
     this.hideLoader();
-    this.navCtrl.navigateForward(`dashboard/${userData.data.balance.balance}/${userData.data.name}`)
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+          userData: JSON.stringify(userData)
+      }
+  };
+    this.navCtrl.navigateForward(['dashboard'], navigationExtras);
+    // this.navCtrl.navigateForward(
+    //   //`dashboard/${userData.data.balance.balance}/${userData.data.balance.available_limit}/${userData.data.balance.blocked_amount}/${userData.data.balance.limit}/${userData.data.name}`
+    //   )
   }
 
   //FORM VALIDATION

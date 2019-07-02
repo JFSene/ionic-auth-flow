@@ -3,6 +3,9 @@ import { NavController } from '@ionic/angular';
 import { StorageService } from '../../services/storage.service';
 import { User } from '../../models/user';
 import { AuthenticationService } from '../../services/authentication.service';
+import { ActivatedRoute } from "@angular/router";
+import { NavigationExtras } from '@angular/router';
+import { Balance } from '../../models/balance';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,17 +20,29 @@ export class DashboardPage implements OnInit {
   constructor(
     private authService: AuthenticationService,
     private storageService: StorageService,
-    private navCtrl: NavController
-  ) {
-    
-  }
+    private navCtrl: NavController,
+    private route: ActivatedRoute
+  ) { }
+
   ionViewDidEnter() {
-    this.storageService.getItems().then(items => {
-      this.userModel = items;
-      this.user = this.userModel.data.name;  
+    // this.storageService.getItems().then(items => {
+    //   this.userModel = items;
+    //   this.user = this.userModel.data.name;  
+    // });
+
+    this.route.queryParams.subscribe(params => {
+      this.userModel = JSON.parse(params["userData"]);
+      this.userModel.data.auth = {};
+      console.log(this.userModel);
     });
+    console.log(this.userModel);
   }
-  ngOnInit(){ }
+  ngOnInit(){ 
+    // console.log(this.userModel);
+    // this.route.queryParams.subscribe(params => {
+    //   this.userModel = JSON.parse(params["userData"]);
+    // });
+  }
 
   logout(){
     this.authService.logout()
@@ -41,8 +56,13 @@ export class DashboardPage implements OnInit {
   }
 
   // NAVIGATION
-  showBalance() {
-    this.navCtrl.navigateForward('balance');
+  showBalance(userBalance: Balance) {
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        userBalance: JSON.stringify(userBalance)
+      }
+  };
+    this.navCtrl.navigateForward(['balance'], navigationExtras);
   }
   
 }
