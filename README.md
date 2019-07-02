@@ -12,4 +12,4 @@ Ionic auth flow and api consumption
 - NavController for Routing
 - Stand alone API Service and Storage Service
 
-<iframe src="https://appetize.io/embed/upnajdcjug5puqcfhdmccxh1e8?device=iphone8&scale=100&autoplay=false&orientation=portrait&deviceColor=black" width="378px" height="800px" frameborder="0" scrolling="no"></iframe>
+# [Teste o App live](https://appetize.io/app/upnajdcjug5puqcfhdmccxh1e8)
